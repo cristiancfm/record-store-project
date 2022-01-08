@@ -92,7 +92,6 @@ public class AddItemController implements Initializable, AddControllerInterface 
 
     @Override
     public void areInputsCorrect() throws Exception{
-
         if(tfTitle.getText().trim().isEmpty() || cbArtistId.getValue() == null || tfFormat.getText().trim().isEmpty() ||
             tfGenre.getText().trim().isEmpty() || tfYear.getText().trim().isEmpty() || tfNoUnits.getText().trim().isEmpty()){
             throw new InvalidInputException();
