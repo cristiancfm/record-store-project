@@ -1,0 +1,4 @@
+# Project exclude paths
+/target/
+/record-store-project.iml
+/.idea/
