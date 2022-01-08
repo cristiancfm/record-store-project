@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
     private final String APP_VERSION = "1.0";
-    private final String GITHUB_LINK = "https://github.com/cristiancfm/media-player-project";
+    private final String GITHUB_LINK = "https://github.com/cristiancfm/record-store-project";
 
     @FXML
     private MenuItem menuExit;
