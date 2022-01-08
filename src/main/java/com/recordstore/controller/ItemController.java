@@ -1,8 +1,12 @@
 package com.recordstore.controller;
 
+import com.recordstore.exceptions.ArtistNotFoundException;
+import com.recordstore.model.Artist;
 import com.recordstore.model.Item;
 import com.recordstore.RSApplication;
 import com.recordstore.exceptions.NoRowSelectedException;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,10 +15,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
@@ -22,14 +24,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class ItemController implements Initializable {
     @FXML
@@ -52,6 +52,8 @@ public class ItemController implements Initializable {
     private Button btnItemAdd;
     @FXML
     private Button btnItemDelete;
+    @FXML
+    private TextArea textItemInfo;
 
 
     private static EntityManagerFactory emf = RSApplication.getEntityManagerFactory();
@@ -115,11 +117,23 @@ public class ItemController implements Initializable {
         colItemArtistId.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Item, Integer>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<Item, Integer> event) {
-                Item item = event.getRowValue();
-                item.setArtistid(event.getNewValue());
-                tr.begin();
-                em.merge(item);
-                tr.commit();
+
+                //look for the artist id in the database
+                TypedQuery<Artist> query = em.createNamedQuery("Artist.queryById", Artist.class);
+                query.setParameter("id", event.getNewValue());
+                List resultList = query.getResultList();
+
+                if(resultList.isEmpty()){
+                    RSApplication.showErrorAlert(Thread.currentThread(), new ArtistNotFoundException());
+                    tvItems.setItems(ItemController.getItemsList());
+                } else{
+                    Item item = event.getRowValue();
+                    item.setArtistid(event.getNewValue());
+
+                    tr.begin();
+                    em.merge(item);
+                    tr.commit();
+                }
             }
         });
         colFormat.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Item, String>>() {
@@ -224,6 +238,17 @@ public class ItemController implements Initializable {
 
                 //delete elements in table
                 selectedItems.forEach(row -> tvItems.getItems().remove(row));
+            }
+        });
+
+
+        //change information text when selecting a new row
+        tvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Item>() {
+            @Override
+            public void changed(ObservableValue<? extends Item> observableValue, Item oldItem, Item newItem) {
+                if(newItem != null){
+                    textItemInfo.setText(newItem.getInfo());
+                }
             }
         });
 

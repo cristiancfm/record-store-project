@@ -10,6 +10,8 @@ module com.recordstore.core {
     opens com.recordstore.controller to java.persistence, javafx.fxml, org.hibernate.orm.core;
     exports com.recordstore.model;
     opens com.recordstore.model to java.persistence, javafx.fxml, org.hibernate.orm.core;
+    exports com.recordstore.exceptions;
+    opens com.recordstore.exceptions to java.persistence, javafx.fxml, org.hibernate.orm.core;
     exports com.recordstore;
     opens com.recordstore to java.persistence, javafx.fxml, org.hibernate.orm.core;
 }

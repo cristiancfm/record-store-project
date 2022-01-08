@@ -5,9 +5,10 @@ import java.util.Objects;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Artist.queryAll", query = "select a from Artist a")
+        @NamedQuery(name = "Artist.queryAll", query = "select a from Artist a"),
+        @NamedQuery(name = "Artist.queryById", query = "select a from Artist a where a.id = :id")
 })
-public class Artist {
+public class Artist implements DBEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -52,5 +53,13 @@ public class Artist {
     @Override
     public String toString() {
         return "Artist " + id + ": " + name;
+    }
+
+    @Override
+    public String getInfo() {
+        return """
+                Artist (ID: %d)
+                Name: %s
+                """.formatted(id, name);
     }
 }

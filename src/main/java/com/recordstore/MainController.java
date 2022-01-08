@@ -16,7 +16,9 @@ import javafx.scene.layout.FlowPane;
 import javax.persistence.*;
 
 import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -62,7 +64,7 @@ public class MainController implements Initializable {
                     public void handle(ActionEvent event) {
                         try {
                             Desktop.getDesktop().browse(new URI(GITHUB_LINK));
-                        } catch (Exception e) {
+                        } catch (IOException | URISyntaxException e) {
                             e.printStackTrace();
                         }
                     }

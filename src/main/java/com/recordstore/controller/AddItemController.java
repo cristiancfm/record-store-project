@@ -1,5 +1,6 @@
 package com.recordstore.controller;
 
+import com.recordstore.exceptions.InvalidInputException;
 import com.recordstore.model.Artist;
 import com.recordstore.model.Item;
 import com.recordstore.RSApplication;
@@ -23,7 +24,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class AddItemController implements Initializable {
+public class AddItemController implements Initializable, AddControllerInterface {
     @FXML
     private TextField tfTitle;
     @FXML
@@ -47,12 +48,7 @@ public class AddItemController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //set artistid combobox elements
-        ObservableList<Artist> artistsList = FXCollections.observableArrayList();
-
-        Query query = em.createNamedQuery("Artist.queryAll");
-        List resultList = query.getResultList();
-        artistsList.addAll(resultList);
-
+        ObservableList<Artist> artistsList = ArtistController.getArtistsList();
         cbArtistId.setItems(artistsList);
 
 
@@ -94,16 +90,17 @@ public class AddItemController implements Initializable {
 
     }
 
-    private void areInputsCorrect() throws Exception{
+    @Override
+    public void areInputsCorrect() throws Exception{
 
         if(tfTitle.getText().trim().isEmpty() || cbArtistId.getValue() == null || tfFormat.getText().trim().isEmpty() ||
             tfGenre.getText().trim().isEmpty() || tfYear.getText().trim().isEmpty() || tfNoUnits.getText().trim().isEmpty()){
-            throw new Exception("There are empty values");
+            throw new InvalidInputException();
         }
 
         //check if the year has 4 digits
         if(tfYear.getText().length() != 4){
-            throw new NumberFormatException("The year has not 4 digits");
+            throw new InvalidInputException();
         }
         
         //check if the year is a number

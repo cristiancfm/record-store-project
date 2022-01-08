@@ -7,11 +7,11 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(name = "Item.queryAll", query = "select i from Item i")
 })
-public class Item {
+public class Item implements DBEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String id;
+    private int id;
 
     @Basic
     @Column(name = "title")
@@ -40,11 +40,11 @@ public class Item {
     public Item() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -112,5 +112,18 @@ public class Item {
     @Override
     public String toString() {
         return "Item " + id + ": " + title;
+    }
+
+    @Override
+    public String getInfo() {
+        return """
+                Item (ID: %d)
+                Title: %s
+                Artist ID: %d
+                Format: %s
+                Genre: %s
+                Year: %d
+                No. Units: %d
+                """.formatted(id, title, artistid, format, genre, year, nounits);
     }
 }

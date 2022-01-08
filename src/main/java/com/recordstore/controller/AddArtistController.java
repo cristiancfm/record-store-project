@@ -1,5 +1,6 @@
 package com.recordstore.controller;
 
+import com.recordstore.exceptions.InvalidInputException;
 import com.recordstore.model.Artist;
 import com.recordstore.RSApplication;
 import javafx.event.ActionEvent;
@@ -17,7 +18,7 @@ import javax.persistence.EntityTransaction;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class AddArtistController implements Initializable {
+public class AddArtistController implements Initializable, AddControllerInterface {
     @FXML
     private TextField tfName;
     @FXML
@@ -64,10 +65,11 @@ public class AddArtistController implements Initializable {
 
     }
 
-    private void areInputsCorrect() throws Exception{
+    @Override
+    public void areInputsCorrect() throws Exception{
 
         if(tfName.getText().trim().isEmpty()){
-            throw new Exception("There are empty values");
+            throw new InvalidInputException();
         }
 
     }

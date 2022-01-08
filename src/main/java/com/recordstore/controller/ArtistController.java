@@ -3,6 +3,8 @@ package com.recordstore.controller;
 import com.recordstore.model.Artist;
 import com.recordstore.RSApplication;
 import com.recordstore.exceptions.NoRowSelectedException;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,10 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
@@ -41,6 +40,8 @@ public class ArtistController implements Initializable {
     private Button btnArtistAdd;
     @FXML
     private Button btnArtistDelete;
+    @FXML
+    private TextArea textArtistInfo;
 
 
     private static EntityManagerFactory emf = RSApplication.getEntityManagerFactory();
@@ -154,6 +155,17 @@ public class ArtistController implements Initializable {
 
                 //delete elements in table
                 selectedArtists.forEach(row -> tvArtists.getItems().remove(row));
+            }
+        });
+
+
+        //change information text when selecting a new row
+        tvArtists.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Artist>() {
+            @Override
+            public void changed(ObservableValue<? extends Artist> observableValue, Artist oldArtist, Artist newArtist) {
+                if(newArtist != null){
+                    textArtistInfo.setText(newArtist.getInfo());
+                }
             }
         });
 
